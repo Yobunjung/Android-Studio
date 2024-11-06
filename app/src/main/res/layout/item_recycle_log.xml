@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- 재활용 종류 -->
+    <TextView
+        android:id="@+id/bin_type_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="종류"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <!-- 재활용 횟수 -->
+    <TextView
+        android:id="@+id/recycle_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="횟수: 0"
+        android:textColor="#717070"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"/>
+
+    <!-- 날짜 및 시간 -->
+    <TextView
+        android:id="@+id/timestamp_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2024-10-02 17:01:29"
+        android:textColor="#717070"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp"/>
+
+</LinearLayout>

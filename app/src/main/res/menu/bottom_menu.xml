@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:title="홈"
+        android:icon="@drawable/home"/>
+
+    <item
+        android:id="@+id/guide"
+        android:enabled="true"
+        android:title="가이드 북"
+        android:icon="@drawable/guide"/>
+    <item
+        android:id="@+id/camera"
+        android:enabled="true"
+        android:title="카메라"
+        android:icon="@drawable/camera"/>
+
+    <item
+        android:id="@+id/map"
+        android:enabled="true"
+        android:title="지도"
+        android:icon="@drawable/map"/>
+
+    <item
+        android:id="@+id/shop"
+        android:enabled="true"
+        android:title="상점"
+        android:icon="@drawable/shop"/>
+</menu>
