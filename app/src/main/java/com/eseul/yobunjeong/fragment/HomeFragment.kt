@@ -11,23 +11,30 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.eseul.yobunjeong.PointActivity
 import com.eseul.yobunjeong.R
 import com.eseul.yobunjeong.UsageActivity
+import com.eseul.yobunjeong.adapter.UsageAdapter
 import com.eseul.yobunjeong.model.HomeModel
 import com.eseul.yobunjeong.viewmodel.HomeViewModel
+import com.eseul.yobunjeong.viewmodel.UsageViewModel
 
 class HomeFragment : Fragment() {
 
     // ViewModel 초기화
-    private lateinit var  homeViewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var usageViewModel: UsageViewModel
+    private lateinit var usageAdapter: UsageAdapter
 
     private lateinit var pointsTextView: TextView
-    private lateinit var usageImageView:ImageView
+    private lateinit var usageImageView: ImageView
     private lateinit var nicknameTextView: TextView
     private lateinit var plasticCountTextView: TextView
     private lateinit var paperCountTextView: TextView
     private lateinit var canCountTextView: TextView
+    private lateinit var recycleLogsRecyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,14 +47,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         // UI 요소 초기화
         pointsTextView = view.findViewById(R.id.points_text_view)
-        usageImageView=view.findViewById(R.id.usage_list)
+        usageImageView = view.findViewById(R.id.usage_list)
         nicknameTextView = view.findViewById(R.id.nickname_text_view)
         plasticCountTextView = view.findViewById(R.id.plastic_count_text_view)
         paperCountTextView = view.findViewById(R.id.paper_count_text_view)
         canCountTextView = view.findViewById(R.id.can_count_text_view)
+        recycleLogsRecyclerView = view.findViewById(R.id.recycle_logs_recycler_view)
 
         // 포인트 TextView 클릭 시 PointActivity로 이동
         pointsTextView.setOnClickListener {
@@ -57,19 +64,36 @@ class HomeFragment : Fragment() {
 
         // 이용 내역 ImageView 클릭 시 UsageActivity로 이동
         usageImageView.setOnClickListener {
-            val intent=Intent(requireContext(),UsageActivity::class.java)
+            val intent = Intent(requireContext(), UsageActivity::class.java)
             startActivity(intent)
         }
 
-        // ViewModelProvider를 사용하여 ViewModel 초기화
-        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        // RecyclerView 설정
+        recycleLogsRecyclerView.layoutManager = LinearLayoutManager(context)
+        usageAdapter = UsageAdapter()
+        recycleLogsRecyclerView.adapter = usageAdapter
 
-        // ViewModel에서 데이터를 관찰하여 UI 업데이트
+        // ViewModel 초기화
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        usageViewModel = ViewModelProvider(this).get(UsageViewModel::class.java)
+
+        // HomeViewModel에서 homeData를 관찰하여 UI 업데이트
         homeViewModel.homeData.observe(viewLifecycleOwner, Observer { homeData ->
             if (homeData != null) {
                 updateUI(homeData)
             } else {
                 Toast.makeText(requireContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        // UsageViewModel에서 재활용 내역 리스트 관찰
+        val userId = 1 // 실제 사용자 ID로 변경
+        usageViewModel.getRecycleLogs(userId).observe(viewLifecycleOwner, Observer { usageList ->
+            if (usageList != null && usageList.isNotEmpty()) {
+                val recentRecycles = usageList.flatMap { it.recentRecycles }
+                usageAdapter.submitList(recentRecycles)
+            } else {
+                Toast.makeText(context, "재활용 내역을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }
         })
     }

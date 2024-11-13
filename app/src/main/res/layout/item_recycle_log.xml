@@ -24,7 +24,8 @@
         android:text="횟수: 0"
         android:textColor="#717070"
         android:textSize="14sp"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp"
+        android:visibility="gone"/>
 
     <!-- 날짜 및 시간 -->
     <TextView

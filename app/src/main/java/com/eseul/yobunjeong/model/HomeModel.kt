@@ -36,15 +36,15 @@ data class RecycleItem(
 )
 
 data class RecycleCounts(
-    @SerializedName("can")
+    @SerializedName("Can")
     @Expose
     val can: String,
 
-    @SerializedName("paper")
+    @SerializedName("Paper")
     @Expose
     val paper: String,
 
-    @SerializedName("plastic")
+    @SerializedName("Plastic")
     @Expose
     val plastic: String
 )

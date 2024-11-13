@@ -1,0 +1,45 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@color/backgroundColor">
+
+    <ImageView
+        android:id="@+id/ivQrCode"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="QR Code" />
+
+    <TextView
+        android:id="@+id/tvInstructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QR코드를 쓰레기통에 찍어주세요"
+        android:textColor="@color/mainColor"
+        android:layout_marginTop="16dp"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tvExpiration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="유효시간 - 30"
+        android:textStyle="bold"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp" />
+
+    <android.widget.Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:textColor="@color/white"
+        android:background="@drawable/button_rounded_corner_rectangle"
+        android:layout_marginTop="24dp" />
+</LinearLayout>
+
+

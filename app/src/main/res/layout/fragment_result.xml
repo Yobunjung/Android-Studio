@@ -1,0 +1,60 @@
+<!-- res/layout/result_fragment.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:id="@+id/tvResultTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="인식 결과"
+        android:textColor="@color/mainColor"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/tvRecognitionResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="캔"
+        android:textColor="#2196F3"
+        android:textSize="48sp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center" />
+
+    <android.widget.Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:background="@drawable/button_rounded_corner_rectangle"
+        android:textColor="@color/white"
+        android:layout_marginBottom="10dp" />
+
+    <android.widget.Button
+        android:id="@+id/btnRetake"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:text="재촬영"
+        android:background="@drawable/button_rounded_corner_rectangle"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="인식결과가 다르다면 재촬영을 해주세요"
+        android:textColor="#757575"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
+        android:gravity="center" />
+</LinearLayout>
+
+
+

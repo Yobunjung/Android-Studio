@@ -6,8 +6,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface UsageApi {
-    @GET("/recycle/{user_id}/logs")
+    @GET("/user/{user_id}/recycle_logs")
     fun getRecycleLogs(
         @Path("user_id") userId: Int
-    ): Call<List<UsageModel>>
+    ): Call<UsageModel>
 }
