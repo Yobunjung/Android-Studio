@@ -1,5 +1,6 @@
 package com.eseul.yobunjeong.fragment
 
+import RecycleViewModel
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.eseul.yobunjeong.R
@@ -16,10 +18,11 @@ import com.eseul.yobunjeong.viewmodel.CameraViewModel
 class QrCodeFragment : Fragment() {
 
     private lateinit var cameraViewModel: CameraViewModel
+    private lateinit var recycleViewModel: RecycleViewModel
     private lateinit var ivQrCode: ImageView
     private lateinit var tvExpiration: TextView
     private lateinit var btnConfirm: Button
-    private var countDownTimer: CountDownTimer? = null  // 타이머를 관리할 변수
+    private var countDownTimer: CountDownTimer? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,45 +34,70 @@ class QrCodeFragment : Fragment() {
         btnConfirm = view.findViewById(R.id.btnConfirm)
 
         cameraViewModel = ViewModelProvider(requireActivity()).get(CameraViewModel::class.java)
+        recycleViewModel = ViewModelProvider(requireActivity()).get(RecycleViewModel::class.java)
 
-        // QR 코드 LiveData 관찰
+        observeRecycleStatus() // 상태 관찰 추가
+
         cameraViewModel.qrCodeBitmap.observe(viewLifecycleOwner) { bitmap ->
             if (bitmap != null) {
                 ivQrCode.setImageBitmap(bitmap)
-                startCountdownTimer() // QR 코드가 표시될 때 타이머 시작
+                startCountdownTimer()
+
+                // QR 코드 성공 시 SSE 연결 시작
+                recycleViewModel.startSse(userId = 1) // userId는 실제 값으로 설정
             } else {
                 tvExpiration.text = "QR 코드 불러오기 실패"
             }
         }
 
         btnConfirm.setOnClickListener {
-            countDownTimer?.cancel()  // 타이머 취소
+            countDownTimer?.cancel()
+            recycleViewModel.stopSse() // SSE 연결 중단
             requireActivity().supportFragmentManager.popBackStack()
         }
 
         return view
     }
 
+    private fun observeRecycleStatus() {
+        recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
+            if (status.success) {
+                // SSE 성공 시 화면 전환
+                navigateToRecycleCompleteFragment()
+            }
+        }
+
+        recycleViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun navigateToRecycleCompleteFragment() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, RecycleCompleteFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun startCountdownTimer() {
-        // 30초 동안 1초마다 카운트다운
         countDownTimer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                // 남은 시간(초) 계산
                 val secondsLeft = millisUntilFinished / 1000
                 tvExpiration.text = "유효 시간 - $secondsLeft 초"
             }
 
             override fun onFinish() {
-                // 타이머가 종료되면 유효 시간 만료 메시지 표시
                 tvExpiration.text = "유효 시간이 만료되었습니다."
-                ivQrCode.setImageBitmap(null)  // QR 코드 제거
+                ivQrCode.setImageBitmap(null)
+                recycleViewModel.stopSse()
             }
         }.start()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Fragment가 종료될 때 타이머 취소
         countDownTimer?.cancel()
+        recycleViewModel.stopSse()
     }
 }
+

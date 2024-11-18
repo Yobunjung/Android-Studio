@@ -55,7 +55,9 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.1")// 최신 버전을 사용할 수 있습니다.
+    implementation ("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation ("com.squareup.okhttp3:okhttp-sse:4.10.0")
+    implementation("com.launchdarkly:okhttp-eventsource:4.1.0")
 
 
 }

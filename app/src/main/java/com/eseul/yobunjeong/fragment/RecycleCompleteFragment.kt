@@ -1,9 +1,7 @@
 package com.eseul.yobunjeong.fragment
 
+import RecycleViewModel
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +9,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.eseul.yobunjeong.R
-import com.eseul.yobunjeong.viewmodel.RecycleViewModel
+
 
 class RecycleCompleteFragment : Fragment() {
 
@@ -22,8 +19,6 @@ class RecycleCompleteFragment : Fragment() {
     private lateinit var tvMessage: TextView
     private lateinit var tvPoints: TextView
     private lateinit var btnConfirm: Button
-    private val handler = Handler(Looper.getMainLooper())
-    private var isPolling = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,83 +29,53 @@ class RecycleCompleteFragment : Fragment() {
         tvPoints = view.findViewById(R.id.tvPoints)
         btnConfirm = view.findViewById(R.id.btnConfirm)
 
-        recycleViewModel = ViewModelProvider(this).get(RecycleViewModel::class.java)
+        recycleViewModel = ViewModelProvider(requireActivity()).get(RecycleViewModel::class.java)
 
         observeViewModel()
 
-        // QR 코드 생성 요청
-        recycleViewModel.generateQrCode()
+        // Start SSE connection
+        recycleViewModel.startSse(userId = 1)
 
         btnConfirm.setOnClickListener {
-            isPolling = false // 폴링 중지
-            handler.removeCallbacksAndMessages(null) // 핸들러 콜백 제거
+            recycleViewModel.stopSse() // Stop SSE connection
             requireActivity().supportFragmentManager.popBackStack()
         }
+
         return view
     }
 
     private fun observeViewModel() {
-        // QR 코드 생성 상태 관찰
-        recycleViewModel.qrCodeGenerated.observe(viewLifecycleOwner, Observer { isGenerated ->
-            if (isGenerated) {
-                Log.d("Fragment", "QR 코드 생성 완료. 폴링 시작")
-                isPolling = true
-                startPolling() // QR 코드 생성 후 폴링 시작
-            }
-        })
-
-        // Recycle 상태 관찰
-        recycleViewModel.recycleStatus.observe(viewLifecycleOwner, Observer { status ->
-            Log.d("Fragment", "Recycle 상태 업데이트: $status")
-            when {
-                status.success -> {
-                    showResultScreen("분리수거 완료! ${status.message}", "+ ${status.earnedPoints} P")
-                    isPolling = false
-                }
-                !status.success && status.earnedPoints == 0 -> {
-                    showResultScreen(status.message, "")
-                    isPolling = false
-                }
-                else -> {
-                    tvMessage.text = status.message
-                    tvPoints.text = ""
-                }
-            }
-        })
-
-        // 오류 메시지 관찰
-        recycleViewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
-            Log.e("Fragment", "에러 발생: $error")
-            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-        })
-    }
-
-    private fun startPolling() {
-        Log.d("Polling", "폴링 작업 시작")
-        val pollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isPolling) {
-                    Log.d("Polling", "폴링 중지됨")
-                    return
-                }
-                Log.d("Polling", "fetchRecycleStatus 호출")
-                recycleViewModel.fetchRecycleStatus()
-                handler.postDelayed(this, 2000) // 2초마다 반복
+        recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
+            if (status.success) {
+                tvMessage.text = "분리수거 완료! ${status.message}"
+                tvPoints.text = "+ ${status.earnedPoints} P"
+                btnConfirm.visibility = View.VISIBLE
+                recycleViewModel.stopSse() // 성공 시 SSE 연결 종료
+            } else {
+                tvMessage.text = status.message
+                tvPoints.text = ""
             }
         }
 
-        handler.post(pollingRunnable) // 폴링 작업 시작
-    }
+        recycleViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+        }
 
-    private fun showResultScreen(message: String, points: String) {
-        tvMessage.text = message
-        tvPoints.text = points
-        btnConfirm.visibility = View.VISIBLE
+        // 기존 데이터 즉시 반영
+        recycleViewModel.recycleStatus.value?.let { status ->
+            if (status.success) {
+                tvMessage.text = "분리수거 완료! ${status.message}"
+                tvPoints.text = "+ ${status.earnedPoints} P"
+                btnConfirm.visibility = View.VISIBLE
+            } else {
+                tvMessage.text = status.message
+                tvPoints.text = ""
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        isPolling = false // Fragment 종료 시 폴링 중지
-        handler.removeCallbacksAndMessages(null)
+        recycleViewModel.stopSse() // Fragment 종료 시 SSE 연결 중단
     }
 }
