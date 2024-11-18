@@ -23,10 +23,9 @@ import com.eseul.yobunjeong.viewmodel.UsageViewModel
 
 class HomeFragment : Fragment() {
 
-    // ViewModel 초기화
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var usageViewModel: UsageViewModel
-    private lateinit var usageAdapter: UsageAdapter
+    private lateinit var usageAdapterFixed: UsageAdapter
 
     private lateinit var pointsTextView: TextView
     private lateinit var usageImageView: ImageView
@@ -40,7 +39,6 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // fragment_home.xml을 inflate
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -68,10 +66,11 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
-        // RecyclerView 설정
+        // RecyclerView 초기화
         recycleLogsRecyclerView.layoutManager = LinearLayoutManager(context)
-        usageAdapter = UsageAdapter()
-        recycleLogsRecyclerView.adapter = usageAdapter
+        usageAdapterFixed = UsageAdapter()
+        recycleLogsRecyclerView.adapter = usageAdapterFixed
+        recycleLogsRecyclerView.isNestedScrollingEnabled = false // 스크롤 비활성화
 
         // ViewModel 초기화
         homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
@@ -87,11 +86,16 @@ class HomeFragment : Fragment() {
         })
 
         // UsageViewModel에서 재활용 내역 리스트 관찰
+        observeRecycleLogs()
+    }
+
+    private fun observeRecycleLogs() {
         val userId = 1 // 실제 사용자 ID로 변경
         usageViewModel.getRecycleLogs(userId).observe(viewLifecycleOwner, Observer { usageList ->
             if (usageList != null && usageList.isNotEmpty()) {
-                val recentRecycles = usageList.flatMap { it.recentRecycles }
-                usageAdapter.submitList(recentRecycles)
+                // 상위 5개의 데이터만 설정
+                val fixedLogs = usageList.flatMap { it.recentRecycles }.take(5)
+                usageAdapterFixed.submitList(fixedLogs)
             } else {
                 Toast.makeText(context, "재활용 내역을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }

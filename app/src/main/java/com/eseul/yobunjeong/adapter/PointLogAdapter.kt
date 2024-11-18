@@ -1,4 +1,4 @@
-package com.eseul.yobunjeong.Adapter
+package com.eseul.yobunjeong.adapter
 
 import android.view.LayoutInflater
 import android.view.View

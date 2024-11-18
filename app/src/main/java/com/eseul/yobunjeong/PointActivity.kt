@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.eseul.yobunjeong.Adapter.PointLogAdapter
+import com.eseul.yobunjeong.adapter.PointLogAdapter
 import com.eseul.yobunjeong.model.PointModel
 import com.eseul.yobunjeong.viewmodel.PointViewModel
 

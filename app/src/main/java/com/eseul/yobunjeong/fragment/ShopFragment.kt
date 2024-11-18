@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.eseul.yobunjeong.R
-import com.eseul.yobunjeong.Adapter.TabAdapter
+import com.eseul.yobunjeong.adapter.TabAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 

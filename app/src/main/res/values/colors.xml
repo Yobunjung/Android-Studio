@@ -5,4 +5,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="dividerColor">#DDDDDD</color>
+    <color name="red">#FF0000</color>
+
+    <color name="holo_red_dark">#CC0000</color>
+    <color name="holo_blue_dark">#0099CC</color>
+    <color name="darker_gray">#A9A9A9</color>
 </resources>

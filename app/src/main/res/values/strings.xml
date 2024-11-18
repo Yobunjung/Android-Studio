@@ -2,4 +2,17 @@
     <string name="app_name">YoBunJeong</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+
+    <string name="address_label">주소지</string>
+    <string name="address1_text">수원대학교</string>
+    <string name="address2_text">경기도 화성시</string>
+    <string name="status_paper_label">종이</string>
+    <string name="status_paper_status">ON</string>
+    <string name="status_plastic_label">플라스틱</string>
+    <string name="status_plastic_status">FULL</string>
+    <string name="status_can_label">캔</string>
+    <string name="status_can_status">ON</string>
+
 </resources>

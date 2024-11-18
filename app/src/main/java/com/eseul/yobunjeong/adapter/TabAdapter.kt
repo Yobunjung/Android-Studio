@@ -1,4 +1,4 @@
-package com.eseul.yobunjeong.Adapter
+package com.eseul.yobunjeong.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter

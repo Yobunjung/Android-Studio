@@ -23,4 +23,12 @@ object RetrofitClient {
     val qrCodeApi: QrCodeApi by lazy {
         instance.create(QrCodeApi::class.java)
     }
+
+    val mapApi: MapApi by lazy {
+        instance.create(MapApi::class.java)
+    }
+
+    val recycleCompleteApi: RecycleCompleteApi by lazy {
+        instance.create(RecycleCompleteApi::class.java)
+    }
 }
