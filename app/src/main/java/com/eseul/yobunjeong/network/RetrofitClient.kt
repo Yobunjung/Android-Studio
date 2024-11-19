@@ -31,4 +31,9 @@ object RetrofitClient {
     val recycleCompleteApi: RecycleCompleteApi by lazy {
         instance.create(RecycleCompleteApi::class.java)
     }
+
+    val binStatusApi: BinStatusApi by lazy {
+        instance.create(BinStatusApi::class.java)
+    }
+
 }

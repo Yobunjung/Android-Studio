@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,11 +18,16 @@ import java.io.ByteArrayInputStream
 
 class CameraViewModel(private val repository: ImageRepository) : ViewModel() {
 
-    private val _uploadResult = MutableLiveData<String>()
-    val uploadResult: LiveData<String> get() = _uploadResult
+    private val _uploadResult = MutableLiveData<String?>()
+    val uploadResult: MutableLiveData<String?> get() = _uploadResult
 
-    private val _qrCodeBitmap = MutableLiveData<Bitmap>()
-    val qrCodeBitmap: LiveData<Bitmap> get() = _qrCodeBitmap
+    // 값을 설정할 때 내부에서 _uploadResult에 접근
+    fun resetUploadResult() {
+        _uploadResult.value = null
+    }
+
+    private val _qrCodeBitmap = MutableLiveData<Bitmap?>()
+    val qrCodeBitmap: MutableLiveData<Bitmap?> get() = _qrCodeBitmap
 
     // 이미지 업로드 함수
     fun uploadImage(image: MultipartBody.Part) {

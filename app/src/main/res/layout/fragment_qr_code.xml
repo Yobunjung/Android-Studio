@@ -36,7 +36,7 @@
         android:id="@+id/btnConfirm"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
-        android:text="확인"
+        android:text="이전으로"
         android:textColor="@color/white"
         android:background="@drawable/button_rounded_corner_rectangle"
         android:layout_marginTop="24dp" />

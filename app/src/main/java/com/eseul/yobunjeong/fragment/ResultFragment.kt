@@ -38,16 +38,22 @@ class ResultFragment : Fragment() {
         val resultText = arguments?.getString("recognition_result") ?: "결과 없음"
         tvRecognitionResult.text = resultText
 
+        //확인
         btnConfirm.setOnClickListener {
             cameraViewModel.requestQrCode(trashType = resultText, userId = 1)
             showQrCodeFragment()
         }
 
+        //재촬영
         btnRetake.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-            val cameraFragment = requireActivity().supportFragmentManager.findFragmentByTag("CameraFragment") as? CameraFragment
-            cameraFragment?.openCamera()
+            val newCameraFragment = CameraFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, newCameraFragment, "CameraFragment")
+                .addToBackStack(null)
+                .commit()
         }
+
+
 
         return view
     }

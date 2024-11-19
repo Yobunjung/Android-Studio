@@ -7,28 +7,67 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/recycle_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="분리수거 완료!"
+        android:textColor="@color/mainColor"
+        android:textStyle="bold"
+        android:textSize="45sp"
+        android:gravity="center"/>
+
+    <TextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="분리수거 진행 중입니다..."
-        android:textSize="18sp"
+        android:text="포인트가 적립되었습니다."
+        android:textColor="@color/mainColor"
+        android:textStyle="bold"
+        android:textSize="30sp"
         android:gravity="center"
         android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:id="@+id/tvPoints"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="+ 0 P"
-        android:textSize="24sp"
-        android:textColor="@android:color/holo_blue_dark"
-        android:layout_marginBottom="32dp" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="32dp">
 
-    <Button
+        <!-- "+" 텍스트 -->
+        <TextView
+            android:id="@+id/Plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"
+            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="@color/mainColor" />
+
+        <!-- 포인트 텍스트 -->
+        <TextView
+            android:id="@+id/tvPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:text="0 P"
+            android:textStyle="bold"
+            android:textSize="30sp"
+            android:textColor="#F9D03F" />
+    </LinearLayout>
+
+
+    <android.widget.Button
         android:id="@+id/btnConfirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="30dp"
         android:text="확인"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:textColor="@android:color/white" />
+        android:textStyle="bold"
+        android:background="@drawable/button_rounded_corner_rectangle"
+        android:textColor="@color/white" />
 </LinearLayout>
+
+

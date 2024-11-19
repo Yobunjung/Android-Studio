@@ -19,16 +19,17 @@ class SseClient(private val url: String, private val listener: SseListener) {
         .build()
 
     private var eventSource: EventSource? = null
+    private var isClosedManually = false // 수동 종료 여부 확인 플래그
 
     fun connect() {
         val request = Request.Builder()
             .url(url)
             .build()
 
-        // SSE 연결 생성
         eventSource = EventSources.createFactory(client).newEventSource(request, object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
                 println("SSE 연결 열림")
+                isClosedManually = false // 자동으로 열린 상태
             }
 
             override fun onEvent(
@@ -37,13 +38,13 @@ class SseClient(private val url: String, private val listener: SseListener) {
                 type: String?,
                 data: String
             ) {
-                println("SSE 메시지 수신: $data")
-                try {
-                    val json = JSONObject(data)
-                    listener.onMessageReceived(json)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    listener.onError("잘못된 데이터 형식")
+                if (!isClosedManually) { // 연결이 수동 종료된 경우 추가 작업 방지
+                    try {
+                        val json = JSONObject(data)
+                        listener.onMessageReceived(json)
+                    } catch (e: Exception) {
+                        listener.onError("잘못된 데이터 형식")
+                    }
                 }
             }
 
@@ -52,18 +53,30 @@ class SseClient(private val url: String, private val listener: SseListener) {
                 t: Throwable?,
                 response: Response?
             ) {
-                println("SSE 연결 오류: ${t?.message}")
-                listener.onError(t?.message ?: "알 수 없는 오류")
+                if (!isClosedManually) { // 수동 종료가 아닌 경우만 처리
+                    listener.onError(t?.message ?: "알 수 없는 오류")
+                    disconnect()
+                }
             }
 
             override fun onClosed(eventSource: EventSource) {
-                println("SSE 연결 닫힘")
+                if (!isClosedManually) {
+                    println("SSE 연결 닫힘 (서버)")
+                }
+                disconnect()
             }
         })
     }
 
     fun disconnect() {
-        eventSource?.cancel()
-        println("SSE 연결 종료")
+        if (!isClosedManually) {
+            eventSource?.cancel()
+            eventSource = null
+            isClosedManually = true
+            println("SSE 연결 종료 완료")
+        }
     }
 }
+
+
+

@@ -37,35 +37,55 @@ class CameraFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // 레이아웃 초기화
         val view = inflater.inflate(R.layout.fragment_camera, container, false)
 
-        // ViewModel 초기화 (Activity 범위에서 공유)
+        // ViewModel 초기화
         val repository = ImageRepository()
         val factory = CameraViewModelFactory(repository)
         cameraViewModel = ViewModelProvider(requireActivity(), factory).get(CameraViewModel::class.java)
+
+        // ViewModel 상태 초기화
+        resetViewModelState()
 
         // 카메라 퍼미션 체크 및 요청
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(android.Manifest.permission.CAMERA),
-                CAMERA_PERMISSION_CODE
-            )
+            requestCameraPermission()
         } else {
             openCamera()
         }
 
-        // 서버 응답 결과를 관찰하고 임시 변수에 저장
-        cameraViewModel.uploadResult.observe(viewLifecycleOwner) { result ->
-            result?.let {
-                tempResult = translateTrashType(it)  // 결과를 임시 변수에 저장
-                showResultFragment(tempResult ?: "알 수 없음")
-            } ?: Log.e("CameraFragment", "uploadResult is null")
-        }
+        // 서버 응답 결과를 관찰
+        observeUploadResult()
 
         return view
+    }
+
+    // ViewModel 상태를 초기화하는 함수
+    private fun resetViewModelState() {
+        tempResult = null
+        cameraViewModel.resetUploadResult()
+    }
+
+    // 카메라 퍼미션 요청 함수
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(android.Manifest.permission.CAMERA),
+            CAMERA_PERMISSION_CODE
+        )
+    }
+
+    // LiveData 관찰 함수
+    private fun observeUploadResult() {
+        cameraViewModel.uploadResult.observe(viewLifecycleOwner) { result ->
+            result?.let {
+                tempResult = translateTrashType(it) // 결과를 tempResult로 갱신
+                showResultFragment(tempResult ?: "알 수 없음") // 결과를 새 프래그먼트로 전달
+            } ?: Log.e("CameraFragment", "uploadResult is null")
+        }
     }
 
     fun openCamera() {
@@ -83,10 +103,10 @@ class CameraFragment : Fragment() {
         resultFragment.arguments = bundle
 
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, resultFragment)
-            .addToBackStack(null)
-            .commit()
+            .replace(R.id.fragment_container, resultFragment) // 항상 replace로 새로운 데이터 반영
+            .commit() // addToBackStack(null)를 제거하면 중복 Fragment 방지
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -107,12 +127,15 @@ class CameraFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as? Bitmap
-            imageBitmap?.let {
-                val imagePart = convertBitmapToMultipart(it)
-                cameraViewModel.uploadImage(imagePart)
+            if (imageBitmap != null) { // Null 체크
+                val imagePart = convertBitmapToMultipart(imageBitmap)
+                cameraViewModel.uploadImage(imagePart) // 데이터 업로드
+            } else {
+                Log.e("CameraFragment", "Bitmap is null")
             }
         }
     }
+
 
     private fun convertBitmapToMultipart(bitmap: Bitmap): MultipartBody.Part {
         val bos = ByteArrayOutputStream()

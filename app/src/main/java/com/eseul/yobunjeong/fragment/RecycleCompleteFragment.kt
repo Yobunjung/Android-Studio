@@ -37,18 +37,20 @@ class RecycleCompleteFragment : Fragment() {
         recycleViewModel.startSse(userId = 1)
 
         btnConfirm.setOnClickListener {
-            recycleViewModel.stopSse() // Stop SSE connection
-            requireActivity().supportFragmentManager.popBackStack()
+            requireActivity()
+                .findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
+                .selectedItemId = R.id.home
         }
 
         return view
     }
 
     private fun observeViewModel() {
+        // 상태 변경 관찰
         recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
             if (status.success) {
-                tvMessage.text = "분리수거 완료! ${status.message}"
-                tvPoints.text = "+ ${status.earnedPoints} P"
+                tvMessage.text = status.message
+                tvPoints.text = " ${status.earnedPoints} P"
                 btnConfirm.visibility = View.VISIBLE
                 recycleViewModel.stopSse() // 성공 시 SSE 연결 종료
             } else {
@@ -57,20 +59,9 @@ class RecycleCompleteFragment : Fragment() {
             }
         }
 
+        // 에러 메시지 관찰
         recycleViewModel.errorMessage.observe(viewLifecycleOwner) { error ->
             Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-        }
-
-        // 기존 데이터 즉시 반영
-        recycleViewModel.recycleStatus.value?.let { status ->
-            if (status.success) {
-                tvMessage.text = "분리수거 완료! ${status.message}"
-                tvPoints.text = "+ ${status.earnedPoints} P"
-                btnConfirm.visibility = View.VISIBLE
-            } else {
-                tvMessage.text = status.message
-                tvPoints.text = ""
-            }
         }
     }
 

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#F5F5F5">
+    android:background="@color/backgroundColor">
 
     <!-- 카드 형태의 배경 레이아웃 -->
     <LinearLayout
