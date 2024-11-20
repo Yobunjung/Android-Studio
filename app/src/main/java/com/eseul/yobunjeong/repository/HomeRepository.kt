@@ -1,6 +1,5 @@
 package com.eseul.yobunjeong.repository
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.eseul.yobunjeong.model.HomeModel
 import com.eseul.yobunjeong.network.HomeApi
@@ -12,8 +11,8 @@ import retrofit2.Response
 class HomeRepository {
     private val homeApi = RetrofitClient.instance.create(HomeApi::class.java)
 
-    fun getHomeData(): LiveData<HomeModel> {
-        val homeData = MutableLiveData<HomeModel>()
+    fun getHomeData(): MutableLiveData<HomeModel?> {
+        val homeData = MutableLiveData<HomeModel?>()
 
         homeApi.getHomeData().enqueue(object : Callback<HomeModel> {
             override fun onResponse(call: Call<HomeModel>, response: Response<HomeModel>) {

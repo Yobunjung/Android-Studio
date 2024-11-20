@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_view"
+    android:padding="8dp"
+    android:layout_margin="8dp">
+
+    <ImageView
+        android:id="@+id/storeImage"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/store1" />
+
+    <TextView
+        android:id="@+id/storeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="상품 제목"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/storePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="가격: 100P"
+        android:textSize="14sp"
+        android:textColor="#717070" />
+
+    <Button
+        android:id="@+id/buyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="구매"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/mainColor" />
+
+</LinearLayout>

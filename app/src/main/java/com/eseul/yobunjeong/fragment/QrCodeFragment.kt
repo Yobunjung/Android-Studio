@@ -61,9 +61,11 @@ class QrCodeFragment : Fragment() {
 
     private fun observeRecycleStatus() {
         recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
-            if (status.success) {
-                // SSE 성공 시 화면 전환
-                navigateToRecycleCompleteFragment()
+            if (status != null) {
+                if (status.success) {
+                    // SSE 성공 시 화면 전환
+                    navigateToRecycleCompleteFragment()
+                }
             }
         }
 

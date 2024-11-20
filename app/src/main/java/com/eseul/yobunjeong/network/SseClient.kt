@@ -22,6 +22,10 @@ class SseClient(private val url: String, private val listener: SseListener) {
     private var isClosedManually = false // 수동 종료 여부 확인 플래그
 
     fun connect() {
+        if (eventSource != null) {
+            println("SSE 연결이 이미 열려 있습니다.")
+            return
+        }
         val request = Request.Builder()
             .url(url)
             .build()
@@ -29,7 +33,7 @@ class SseClient(private val url: String, private val listener: SseListener) {
         eventSource = EventSources.createFactory(client).newEventSource(request, object : EventSourceListener() {
             override fun onOpen(eventSource: EventSource, response: Response) {
                 println("SSE 연결 열림")
-                isClosedManually = false // 자동으로 열린 상태
+                isClosedManually = false
             }
 
             override fun onEvent(
@@ -38,12 +42,12 @@ class SseClient(private val url: String, private val listener: SseListener) {
                 type: String?,
                 data: String
             ) {
-                if (!isClosedManually) { // 연결이 수동 종료된 경우 추가 작업 방지
+                if (!isClosedManually) {
                     try {
                         val json = JSONObject(data)
                         listener.onMessageReceived(json)
                     } catch (e: Exception) {
-                        listener.onError("잘못된 데이터 형식")
+                        listener.onError("잘못된 데이터 형식: ${e.message}")
                     }
                 }
             }
@@ -53,8 +57,12 @@ class SseClient(private val url: String, private val listener: SseListener) {
                 t: Throwable?,
                 response: Response?
             ) {
-                if (!isClosedManually) { // 수동 종료가 아닌 경우만 처리
-                    listener.onError(t?.message ?: "알 수 없는 오류")
+                if (!isClosedManually) {
+                    val errorMessage = response?.let {
+                        "서버 오류: ${it.code} - ${it.message}"
+                    } ?: t?.message ?: "알 수 없는 오류"
+                    listener.onError(errorMessage)
+                    println("SSE 연결 실패: $errorMessage")
                     disconnect()
                 }
             }
@@ -69,14 +77,11 @@ class SseClient(private val url: String, private val listener: SseListener) {
     }
 
     fun disconnect() {
-        if (!isClosedManually) {
+        if (eventSource != null) {
+            println("SSE 연결 종료")
+            isClosedManually = true
             eventSource?.cancel()
             eventSource = null
-            isClosedManually = true
-            println("SSE 연결 종료 완료")
         }
     }
 }
-
-
-

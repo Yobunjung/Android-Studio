@@ -37,6 +37,8 @@ class RecycleCompleteFragment : Fragment() {
         recycleViewModel.startSse(userId = 1)
 
         btnConfirm.setOnClickListener {
+            // BackStack을 초기화하고 HomeFragment로 이동
+            requireActivity().supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
             requireActivity()
                 .findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
                 .selectedItemId = R.id.home
@@ -48,14 +50,15 @@ class RecycleCompleteFragment : Fragment() {
     private fun observeViewModel() {
         // 상태 변경 관찰
         recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
-            if (status.success) {
-                tvMessage.text = status.message
-                tvPoints.text = " ${status.earnedPoints} P"
-                btnConfirm.visibility = View.VISIBLE
-                recycleViewModel.stopSse() // 성공 시 SSE 연결 종료
-            } else {
-                tvMessage.text = status.message
+            status?.let {
+                tvMessage.text = it.message
+                tvPoints.text = "${it.earnedPoints} P"
+                btnConfirm.visibility = if (it.success) View.VISIBLE else View.GONE
+                if (it.success) recycleViewModel.stopSse()
+            } ?: run {
+                tvMessage.text = "결과 없음"
                 tvPoints.text = ""
+                btnConfirm.visibility = View.GONE
             }
         }
 
