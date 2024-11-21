@@ -37,12 +37,16 @@ class RecycleCompleteFragment : Fragment() {
         recycleViewModel.startSse(userId = 1)
 
         btnConfirm.setOnClickListener {
-            // BackStack을 초기화하고 HomeFragment로 이동
-            requireActivity().supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            recycleViewModel.resetRecycleStatus() // 상태 초기화
+            requireActivity().supportFragmentManager.popBackStack(
+                null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
+            )
             requireActivity()
                 .findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
                 .selectedItemId = R.id.home
         }
+
+
 
         return view
     }
@@ -71,5 +75,6 @@ class RecycleCompleteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         recycleViewModel.stopSse() // Fragment 종료 시 SSE 연결 중단
+        recycleViewModel.resetRecycleStatus() // ViewModel 상태 초기화
     }
 }
