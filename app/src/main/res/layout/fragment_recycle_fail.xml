@@ -1,0 +1,44 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/backgroundColor"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/recycle_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="분리수거 실패!"
+        android:textColor="#FB0000"
+        android:textStyle="bold"
+        android:textSize="45sp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="포인트 미적립 \n 다시 시도하세요!"
+        android:textColor="@color/mainColor"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="16dp" />
+
+
+    <android.widget.Button
+        android:id="@+id/btnRetry"
+        android:layout_width="280dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="30dp"
+        android:text="확인"
+        android:textStyle="bold"
+        android:background="@drawable/button_rounded_corner_rectangle"
+        android:textColor="@color/white" />
+</LinearLayout>
+
+

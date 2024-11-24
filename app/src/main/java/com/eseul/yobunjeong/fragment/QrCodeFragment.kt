@@ -63,8 +63,11 @@ class QrCodeFragment : Fragment() {
         recycleViewModel.recycleStatus.observe(viewLifecycleOwner) { status ->
             if (status != null) {
                 if (status.success) {
-                    // SSE 성공 시 화면 전환
+                    // 성공 시 RecycleCompleteFragment로 이동
                     navigateToRecycleCompleteFragment()
+                } else {
+                    // 실패 시 RecycleFailFragment로 이동
+                    navigateToRecycleFailFragment()
                 }
             }
         }
@@ -81,6 +84,13 @@ class QrCodeFragment : Fragment() {
             .commit()
     }
 
+    private fun navigateToRecycleFailFragment() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, RecycleFailFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
     private fun startCountdownTimer() {
         countDownTimer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -92,6 +102,9 @@ class QrCodeFragment : Fragment() {
                 tvExpiration.text = "유효 시간이 만료되었습니다."
                 ivQrCode.setImageBitmap(null)
                 recycleViewModel.stopSse()
+
+                // 실패 화면으로 이동
+                navigateToRecycleFailFragment()
             }
         }.start()
     }
