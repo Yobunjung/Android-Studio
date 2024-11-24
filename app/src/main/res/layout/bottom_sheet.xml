@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/bottom_sheet.xml -->
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="400dp"
     android:layout_marginTop="40dp"
     android:layout_marginBottom="20dp"
-    android:background="@drawable/background_bottom_sheet"
-    app:cardCornerRadius="30dp"
-    app:cardElevation="8dp">
+    android:id="@+id/bottom_sheet"
+    android:background="@drawable/bottom_sheet_background"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="50dp">
 
     <!-- 내용 전체를 감싸는 RelativeLayout -->
     <RelativeLayout
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="66dp"
+            android:layout_marginStart="55dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="8dp"
             android:text="@string/address_label"
@@ -157,4 +157,4 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</FrameLayout>

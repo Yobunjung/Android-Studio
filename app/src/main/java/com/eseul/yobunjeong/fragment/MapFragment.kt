@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -39,8 +40,15 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         _binding = FragmentMapBinding.bind(view)
 
         // 바텀 시트 초기화
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet.root)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        val bottomSheet = binding.bottomSheet.root
+        if (bottomSheet is FrameLayout) {
+            bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet).apply {
+                state = BottomSheetBehavior.STATE_HIDDEN
+                isHideable = true
+            }
+        } else {
+            throw IllegalStateException("BottomSheet's root is not a FrameLayout")
+        }
 
         // 지도 초기화
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -54,6 +62,8 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         }
     }
 
+
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
 
@@ -62,8 +72,8 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         val b = bitmapDraw.bitmap
         val smallMarker = Bitmap.createScaledBitmap(b, 100, 150, false)
 
-        // 예제 마커 추가 (USW)
-        val usw = LatLng(37.21, 126.975)
+        // Custom 마커 추가 (USW)
+        val usw = LatLng(37.21124694874648, 126.9799920737918)
         val markerUSW = googleMap.addMarker(
             MarkerOptions()
                 .position(usw)
@@ -79,12 +89,37 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
             if (clickedMarker == markerUSW) {
                 // ViewModel로부터 데이터 로드
                 viewModel.fetchBinStatus()
-                // 바텀 시트 열기
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                // BottomSheet의 peek_height만큼 보여주기
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
             true
         }
+
+        // 지도 클릭 리스너 설정
+        googleMap.setOnMapClickListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED ||
+                bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED
+            ) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+        // BottomSheetBehavior 콜백 설정
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                // 바텀 시트 상태 변경 시 동작 추가 가능
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    // 상태가 숨겨졌을 때 동작 정의 가능
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // 스크롤 시 애니메이션 관련 동작
+            }
+        })
     }
+
+
 
     private fun updateBottomSheet(binStatus: BinStatusModel) {
         // 주소 업데이트

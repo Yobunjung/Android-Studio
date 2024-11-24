@@ -99,12 +99,15 @@ class QrCodeFragment : Fragment() {
             }
 
             override fun onFinish() {
-                tvExpiration.text = "유효 시간이 만료되었습니다."
-                ivQrCode.setImageBitmap(null)
-                recycleViewModel.stopSse()
+                // Fragment가 Activity에 연결되어 있는지 확인
+                if (isAdded) {
+                    tvExpiration.text = "유효 시간이 만료되었습니다."
+                    ivQrCode.setImageBitmap(null)
+                    recycleViewModel.stopSse()
 
-                // 실패 화면으로 이동
-                navigateToRecycleFailFragment()
+                    // 실패 화면으로 이동
+                    navigateToRecycleFailFragment()
+                }
             }
         }.start()
     }
